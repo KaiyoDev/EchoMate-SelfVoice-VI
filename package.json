@@ -1,0 +1,25 @@
+{
+  "name": "echomate-selfvoice-vi",
+  "version": "1.0.0",
+  "description": "Self-bot Discord tự động vào voice channel theo user",
+  "main": "client/index.js",
+  "scripts": {
+    "start": "node client/index.js"
+  },
+  "keywords": [
+    "discord",
+    "selfbot",
+    "voice",
+    "vietnamese"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^4.4.3",
+    "discord.js-selfbot-v13": "^3.4.2",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  }
+}
