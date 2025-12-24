@@ -3,3 +3,11 @@ node_modules/
 *.log
 .DS_Store
 
+# VOSK models (dung lượng lớn)
+models/
+
+# Audio tạm
+temp/
+*.pcm
+*.wav
+

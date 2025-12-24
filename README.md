@@ -1,161 +1,206 @@
-# 🎙️ EchoMate-SelfVoice-VI
+# 🎙️ EchoMate Voice Bot
 
-Self-bot Discord tự động vào voice channel theo user (Phiên bản tiếng Việt)
+Discord Bot với Voice Recognition và AI Response (Tiếng Việt)
 
-## ⚠️ CẢNH BÁO QUAN TRỌNG
+**Đã chuyển từ Self-bot → Bot thông thường**
 
-**Self-bot vi phạm Terms of Service của Discord!**
+## ⚠️ QUAN TRỌNG
 
-- Tài khoản có thể bị khóa/cấm vĩnh viễn
-- Chỉ sử dụng cho mục đích học tập và thử nghiệm
-- Sử dụng với tài khoản phụ, không dùng tài khoản chính
-- Tác giả không chịu trách nhiệm về bất kỳ hậu quả nào
+- ✅ **Hợp pháp**: Bot thông thường (không vi phạm ToS)
+- ✅ **Hoạt động đầy đủ**: Voice receiving + STT + AI
+- ✅ **Cài đặt đơn giản**: Không cần Visual Studio
 
-## 📋 Mục Tiêu PHASE 1
+## 📋 Tính Năng
 
-- ✅ Đăng nhập Discord bằng USER TOKEN
-- ✅ Theo dõi voice state của chính user
-- ✅ Tự động vào voice channel khi user vào
-- ✅ Tự động rời voice channel khi user rời
+### ✅ Đã Hoàn Thành
+
+- [x] Bot đăng nhập bằng bot token
+- [x] Slash commands: `/join`, `/leave`
+- [x] Tự động vào/rời voice channel
+- [x] **Voice receiving hoạt động!**
+- [x] Phát hiện khi user nói
+- [x] Ghi audio stream ra file PCM
+
+### 🔜 Đang Phát Triển
+
+- [ ] Speech-to-Text (Wit.ai)
+- [ ] Gemini AI response
+- [ ] Text-to-Speech (phát lại voice)
 
 ## 🛠️ Công Nghệ
 
-- **Node.js** >= 16.9.0
-- **discord.js-selfbot-v13** (by aiko-chan-ai)
-- **dotenv** (quản lý biến môi trường)
+- **Node.js** >= 16.11.0
+- **discord.js** v14
+- **@discordjs/voice** (voice receiving)
+- **opusscript** (audio codec - không cần Visual Studio)
+- **prism-media** (audio processing)
+- **libsodium-wrappers** (encryption)
 
 ## 📁 Cấu Trúc Dự Án
 
 ```
-EchoMate-SelfVoice-VI/
-│
+EchoMate-Voice-Bot/
 ├─ client/
-│   ├─ index.js          # Đăng nhập self-bot
+│   ├─ index.js          # Bot entry point
+│   ├─ ai/
+│   │   └─ stt.js        # Speech-to-Text (TODO)
 │   └─ voice/
-│       └─ follow.js     # Logic theo dõi voice
-│
+│       ├─ joinLeave.js  # /join, /leave commands
+│       ├─ listen.js     # Voice receiver
+│       └─ speak.js      # TTS output (TODO)
 ├─ utils/
-│   └─ log.js            # Hệ thống log tiếng Việt
-│
-├─ .env.example          # Mẫu file cấu hình
-├─ .env                  # File cấu hình thực (tự tạo)
+│   └─ log.js            # Logger tiếng Việt
+├─ temp/                 # Audio tạm
+├─ .env                  # Config
 ├─ package.json
 └─ README.md
 ```
 
 ## 🚀 Hướng Dẫn Cài Đặt
 
-### Bước 1: Clone/Download dự án
+### Bước 1: Tạo Discord Bot
 
-```bash
-cd EchoMate-SelfVoice-VI
-```
+1. Truy cập: [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click **New Application** → đặt tên (vd: `EchoMate`)
+3. Vào tab **Bot** → **Add Bot**
+4. **Reset Token** → Copy token
+5. Bật **Privileged Gateway Intents**:
+   - ✅ Server Members Intent
+   - ✅ Message Content Intent
+6. Vào tab **OAuth2** → **URL Generator**
+   - Scopes: `bot`, `applications.commands`
+   - Permissions: 
+     - `Send Messages`
+     - `Connect` (Voice)
+     - `Speak` (Voice)
+     - `Use Voice Activity`
+7. Copy **Generated URL** → mở trong trình duyệt → invite bot vào server
 
-### Bước 2: Cài đặt dependencies
+### Bước 2: Cài Đặt Dependencies
 
 ```bash
 npm install
 ```
 
-### Bước 3: Lấy USER TOKEN
+**Lưu ý:**
+- ✅ Dùng `opusscript` (không cần Visual Studio)
+- ✅ Cài đặt nhanh (~5 giây)
+- ✅ Không cần build tools
 
-1. Mở Discord trên trình duyệt (Web Discord)
-2. Nhấn **F12** để mở Developer Tools
-3. Chuyển sang tab **Network**
-4. Nhấn **F5** để reload trang
-5. Lọc XHR requests, tìm bất kỳ request nào tới Discord API
-6. Xem tab **Headers** → tìm **Authorization**
-7. Copy giá trị của **Authorization** (đó chính là USER TOKEN)
-
-**Lưu ý:** Token có dạng dài, bắt đầu bằng các ký tự ngẫu nhiên (không phải "Bot ...")
-
-### Bước 4: Tạo file .env
-
-Tạo file `.env` trong thư mục gốc:
+### Bước 3: Tạo File .env
 
 ```env
-USER_TOKEN=paste_token_của_bạn_vào_đây
+BOT_TOKEN=paste_bot_token_vào_đây
 ```
 
-**Quan trọng:** Không chia sẻ token này với ai!
-
-### Bước 5: Chạy self-bot
+### Bước 4: Chạy Bot
 
 ```bash
 npm start
 ```
 
-Hoặc:
-
-```bash
-node client/index.js
-```
-
 ## 📖 Cách Sử Dụng
 
-1. Chạy self-bot bằng lệnh `npm start`
-2. Đợi self-bot online (sẽ có thông báo màu xanh)
-3. Vào bất kỳ voice channel nào trên Discord
-4. Self-bot sẽ **tự động vào theo** bạn
-5. Khi bạn rời voice, self-bot cũng **tự động rời theo**
+1. **Khởi động bot:**
+   ```bash
+   npm start
+   ```
 
-## 🎯 Tính Năng PHASE 1
+2. **Vào Discord server (nơi đã invite bot)**
 
-### ✅ Đã Hoàn Thành
+3. **Vào voice channel**
 
-- [x] Đăng nhập bằng USER TOKEN
-- [x] Theo dõi voice state của user
-- [x] Tự động join voice khi user join
-- [x] Tự động leave voice khi user leave
-- [x] Tự động chuyển channel khi user chuyển
-- [x] Kiểm tra tránh join trùng lặp
-- [x] Log tiếng Việt đầy đủ
-- [x] Xử lý lỗi cơ bản
+4. **Gõ lệnh:**
+   ```
+   /join   → Bot vào voice channel của bạn
+   /leave  → Bot rời voice
+   ```
 
-### ❌ Không Có Trong PHASE 1
+5. **Nói trong voice:**
+   - Bot sẽ phát hiện và log:
+     ```
+     [VOICE] <User 123456...> đang nói
+     [VOICE] <User 123456...> ngừng nói
+     📁 Đã lưu audio: audio_123_1234567890.pcm
+     ```
 
-- Không có slash command
-- Không có prefix command
-- Không gửi tin nhắn
-- Không tích hợp AI/Gemini
-- Không phát nhạc
+## 🎯 Kết Quả Mong Đợi
 
-## 🐛 Xử Lý Lỗi Thường Gặp
+```
+✓ Bot đã online: EchoMate#1234
+✓ Bot ID: 987654321...
+📊 Đang phục vụ 1 server(s)
+Đang đăng ký slash commands...
+✓ Đã đăng ký slash commands: /join, /leave
+Hệ thống đã sẵn sàng!
 
-### Lỗi: "Không tìm thấy USER_TOKEN"
-- Kiểm tra file `.env` đã tạo chưa
-- Đảm bảo có dòng `USER_TOKEN=...`
+[User dùng /join]
+🎤 Đang vào voice channel: General
+✓ Đã vào voice channel: General
+🎤 Bắt đầu lắng nghe giọng nói...
+✓ Voice receiver đã sẵn sàng!
 
-### Lỗi: "Đăng nhập thất bại"
-- Token có thể đã hết hạn, lấy token mới
-- Token không đúng định dạng
-- Tài khoản có thể đã bị khóa
+[User nói]
+[VOICE] <User 1064755989229867008> đang nói
+[VOICE] <User 1064755989229867008> ngừng nói
+📁 Đã lưu audio: audio_1064755989229867008_1703425123456.pcm
+🗑️ Đã xóa file tạm: audio_1064755989229867008_1703425123456.pcm
+```
 
-### Lỗi: "Không thể vào voice channel"
-- Kiểm tra quyền của tài khoản trong server
-- Server có thể chặn self-bot
-- Kênh voice có thể đầy người
+## 🐛 Xử Lý Lỗi
 
-## 📝 Log Màu Sắc
+### Bot không online?
+- Kiểm tra `BOT_TOKEN` trong `.env`
+- Đảm bảo bot đã được invite vào server
 
-- 🔵 **INFO** (Xanh dương): Thông tin chung
-- 🟢 **SUCCESS** (Xanh lá): Thành công
-- 🔴 **ERROR** (Đỏ): Lỗi
-- 🟡 **WARN** (Vàng): Cảnh báo
-- 🟣 **VOICE** (Tím): Hoạt động voice
+### Lỗi `/join` không hoạt động?
+- Đợi 1-2 phút để Discord sync slash commands
+- Hoặc kick + invite lại bot
 
-## 🔧 Tắt Self-bot
+### Không nhận được audio?
+- Kiểm tra bot có quyền `Connect` và `Speak`
+- Đảm bảo đã cài `@discordjs/opus`
 
-Nhấn **Ctrl+C** trong terminal để tắt an toàn.
+### Lỗi `libsodium` hoặc `sodium`?
+```bash
+npm install libsodium-wrappers
+```
 
-## 📜 License
+## 🔜 Roadmap
 
-MIT License - Tự do sử dụng cho mục đích học tập
+### PHASE 1 ✅ (Hoàn thành)
+- [x] Bot login
+- [x] Slash commands
+- [x] Voice receiving
+
+### PHASE 2 🔄 (Đang làm)
+- [ ] Wit.ai STT integration
+- [ ] Xử lý audio → text
+
+### PHASE 3 📅 (Kế hoạch)
+- [ ] Gemini AI response
+- [ ] Context memory
+- [ ] Personality traits
+
+### PHASE 4 📅 (Kế hoạch)
+- [ ] Text-to-Speech (TTS)
+- [ ] Phát lại response vào voice
+
+## 📝 So Sánh Self-bot vs Bot
+
+| Tính năng | Self-bot (Cũ) | Bot (Mới) |
+|-----------|---------------|-----------|
+| **Hợp pháp** | ❌ Vi phạm ToS | ✅ Hợp pháp |
+| **Voice receiving** | ❌ Không hoạt động | ✅ Hoạt động |
+| **Cài đặt** | 🟡 Khó (lỗi nhiều) | ✅ Dễ |
+| **Ổn định** | ❌ Không | ✅ Rất ổn |
+| **Quyền** | ⚠️ Như user | ✅ Như bot |
 
 ## 🙏 Credits
 
-- **discord.js-selfbot-v13** by [aiko-chan-ai](https://github.com/aiko-chan-ai/discord.js-selfbot-v13)
+- **discord.js** - Discord API wrapper
+- **@discordjs/voice** - Voice support
 
 ---
 
-**Lưu ý cuối:** Dự án này chỉ phục vụ mục đích học tập. Sử dụng có trách nhiệm!
+**Lưu ý:** Dự án này chỉ phục vụ mục đích học tập. Sử dụng có trách nhiệm!
