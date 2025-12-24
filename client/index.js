@@ -1,12 +1,16 @@
 /**
- * EchoMate-SelfVoice-VI
- * Self-bot tự động vào voice channel theo user
+ * EchoMate-SelfVoice-VI - PHASE 2
+ * Self-bot tự động vào voice channel theo user mục tiêu
  */
 
 require('dotenv').config();
 const { Client } = require('discord.js-selfbot-v13');
 const logger = require('../utils/log');
 const { setupVoiceFollow } = require('./voice/follow');
+
+// ===== CẤU HÌNH USER MỤC TIÊU =====
+// ID của user cần theo dõi voice
+const TARGET_USER_ID = process.env.TARGET_USER_ID || '1064755989229867008';
 
 // Khởi tạo Discord self-bot client
 const client = new Client({
@@ -21,15 +25,24 @@ const client = new Client({
 });
 
 // Xử lý khi self-bot sẵn sàng
-client.on('ready', () => {
+client.on('ready', async () => {
   logger.success('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   logger.success(`✓ Self-bot đã online: ${client.user.tag}`);
-  logger.success(`✓ ID: ${client.user.id}`);
+  logger.success(`✓ ID Self-bot: ${client.user.id}`);
   logger.success('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  logger.info('Đang theo dõi voice channel...');
   
-  // Khởi tạo hệ thống theo dõi voice
-  setupVoiceFollow(client);
+  // Hiển thị thông tin user mục tiêu
+  try {
+    const targetUser = await client.users.fetch(TARGET_USER_ID);
+    logger.info(`🎯 Đang theo dõi user: ${targetUser.tag} (ID: ${TARGET_USER_ID})`);
+  } catch (err) {
+    logger.warn(`🎯 Đang theo dõi user ID: ${TARGET_USER_ID} (chưa fetch được thông tin)`);
+  }
+  
+  logger.info('Hệ thống đã sẵn sàng - Chờ user mục tiêu vào voice...');
+  
+  // Khởi tạo hệ thống theo dõi voice với TARGET_USER_ID
+  setupVoiceFollow(client, TARGET_USER_ID);
 });
 
 // Xử lý lỗi
@@ -49,6 +62,13 @@ async function login() {
   if (!token) {
     logger.error('Không tìm thấy USER_TOKEN trong file .env');
     logger.error('Vui lòng tạo file .env và thêm USER_TOKEN=your_token_here');
+    process.exit(1);
+  }
+
+  // Kiểm tra TARGET_USER_ID
+  if (!TARGET_USER_ID) {
+    logger.error('Không tìm thấy TARGET_USER_ID');
+    logger.error('Vui lòng thêm TARGET_USER_ID vào file .env hoặc sửa trong index.js');
     process.exit(1);
   }
 

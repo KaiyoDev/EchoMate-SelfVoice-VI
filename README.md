@@ -1,6 +1,6 @@
-# 🎙️ EchoMate-SelfVoice-VI
+# 🎙️ EchoMate-SelfVoice-VI - PHASE 2
 
-Self-bot Discord tự động vào voice channel theo user (Phiên bản tiếng Việt)
+Self-bot Discord tự động vào voice channel theo user mục tiêu (Phiên bản tiếng Việt)
 
 ## ⚠️ CẢNH BÁO QUAN TRỌNG
 
@@ -11,12 +11,13 @@ Self-bot Discord tự động vào voice channel theo user (Phiên bản tiếng
 - Sử dụng với tài khoản phụ, không dùng tài khoản chính
 - Tác giả không chịu trách nhiệm về bất kỳ hậu quả nào
 
-## 📋 Mục Tiêu PHASE 1
+## 📋 Mục Tiêu PHASE 2
 
 - ✅ Đăng nhập Discord bằng USER TOKEN
-- ✅ Theo dõi voice state của chính user
-- ✅ Tự động vào voice channel khi user vào
-- ✅ Tự động rời voice channel khi user rời
+- ✅ Theo dõi voice state của **user mục tiêu** (không phải chính mình)
+- ✅ Tự động vào voice channel khi user mục tiêu vào
+- ✅ Tự động rời voice channel khi user mục tiêu rời
+- ✅ Cấu hình TARGET_USER_ID linh hoạt
 
 ## 🛠️ Công Nghệ
 
@@ -57,7 +58,7 @@ cd EchoMate-SelfVoice-VI
 npm install
 ```
 
-### Bước 3: Lấy USER TOKEN
+### Bước 3: Lấy USER TOKEN (Self-bot)
 
 1. Mở Discord trên trình duyệt (Web Discord)
 2. Nhấn **F12** để mở Developer Tools
@@ -69,17 +70,30 @@ npm install
 
 **Lưu ý:** Token có dạng dài, bắt đầu bằng các ký tự ngẫu nhiên (không phải "Bot ...")
 
-### Bước 4: Tạo file .env
+### Bước 4: Lấy TARGET_USER_ID (User cần theo dõi)
+
+1. Mở Discord
+2. Vào **User Settings** → **Advanced** → Bật **Developer Mode**
+3. Right-click vào user cần theo dõi
+4. Chọn **Copy ID**
+5. Đây chính là TARGET_USER_ID
+
+**Ví dụ:** `1064755989229867008`
+
+### Bước 5: Tạo file .env
 
 Tạo file `.env` trong thư mục gốc:
 
 ```env
 USER_TOKEN=paste_token_của_bạn_vào_đây
+TARGET_USER_ID=1064755989229867008
 ```
 
-**Quan trọng:** Không chia sẻ token này với ai!
+**Quan trọng:** 
+- Không chia sẻ token này với ai!
+- Thay `TARGET_USER_ID` bằng ID của user bạn muốn theo dõi
 
-### Bước 5: Chạy self-bot
+### Bước 6: Chạy self-bot
 
 ```bash
 npm start
@@ -95,24 +109,32 @@ node client/index.js
 
 1. Chạy self-bot bằng lệnh `npm start`
 2. Đợi self-bot online (sẽ có thông báo màu xanh)
-3. Vào bất kỳ voice channel nào trên Discord
-4. Self-bot sẽ **tự động vào theo** bạn
-5. Khi bạn rời voice, self-bot cũng **tự động rời theo**
+3. Self-bot sẽ hiển thị: `🎯 Đang theo dõi user: Username#1234 (ID: ...)`
+4. Khi **user mục tiêu** vào voice channel → Self-bot **tự động vào theo**
+5. Khi **user mục tiêu** rời voice → Self-bot **tự động rời theo**
+6. Self-bot chỉ theo dõi user có ID trong `TARGET_USER_ID`, bỏ qua tất cả user khác
 
-## 🎯 Tính Năng PHASE 1
+## 🎯 Tính Năng PHASE 2
 
 ### ✅ Đã Hoàn Thành
 
 - [x] Đăng nhập bằng USER TOKEN
-- [x] Theo dõi voice state của user
-- [x] Tự động join voice khi user join
-- [x] Tự động leave voice khi user leave
-- [x] Tự động chuyển channel khi user chuyển
+- [x] Theo dõi voice state của **user mục tiêu cụ thể**
+- [x] Tự động join voice khi user mục tiêu join
+- [x] Tự động leave voice khi user mục tiêu leave
+- [x] Tự động chuyển channel khi user mục tiêu chuyển
 - [x] Kiểm tra tránh join trùng lặp
-- [x] Log tiếng Việt đầy đủ
+- [x] Log tiếng Việt đầy đủ với icon 🎯
 - [x] Xử lý lỗi cơ bản
+- [x] Cấu hình TARGET_USER_ID qua .env hoặc code
+- [x] Hiển thị thông tin user mục tiêu khi khởi động
 
-### ❌ Không Có Trong PHASE 1
+### 🔄 Thay Đổi So Với PHASE 1
+
+- **PHASE 1:** Self-bot theo voice của chính mình
+- **PHASE 2:** Self-bot theo voice của user khác (TARGET_USER_ID)
+
+### ❌ Không Có Trong PHASE 2
 
 - Không có slash command
 - Không có prefix command
@@ -126,6 +148,10 @@ node client/index.js
 - Kiểm tra file `.env` đã tạo chưa
 - Đảm bảo có dòng `USER_TOKEN=...`
 
+### Lỗi: "Không tìm thấy TARGET_USER_ID"
+- Thêm dòng `TARGET_USER_ID=...` vào file `.env`
+- Hoặc sửa trực tiếp trong `client/index.js` dòng 11
+
 ### Lỗi: "Đăng nhập thất bại"
 - Token có thể đã hết hạn, lấy token mới
 - Token không đúng định dạng
@@ -136,6 +162,11 @@ node client/index.js
 - Server có thể chặn self-bot
 - Kênh voice có thể đầy người
 
+### Self-bot không theo dõi user mục tiêu?
+- Đảm bảo TARGET_USER_ID chính xác (18-19 chữ số)
+- Kiểm tra user mục tiêu có trong server chung không
+- Xem log có hiển thị `🎯 Đang theo dõi user: ...` không
+
 ## 📝 Log Màu Sắc
 
 - 🔵 **INFO** (Xanh dương): Thông tin chung
@@ -143,6 +174,25 @@ node client/index.js
 - 🔴 **ERROR** (Đỏ): Lỗi
 - 🟡 **WARN** (Vàng): Cảnh báo
 - 🟣 **VOICE** (Tím): Hoạt động voice
+- 🎯 **Icon mục tiêu**: User mục tiêu thực hiện hành động
+
+## 🔧 Cách Đổi User Mục Tiêu
+
+### Cách 1: Sửa file .env (Khuyến nghị)
+
+```env
+TARGET_USER_ID=123456789012345678
+```
+
+### Cách 2: Sửa trực tiếp trong code
+
+Mở `client/index.js`, sửa dòng 11:
+
+```javascript
+const TARGET_USER_ID = process.env.TARGET_USER_ID || '123456789012345678';
+```
+
+Thay `123456789012345678` bằng ID user bạn muốn theo dõi.
 
 ## 🔧 Tắt Self-bot
 
